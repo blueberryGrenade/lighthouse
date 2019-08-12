@@ -404,6 +404,17 @@ class LighthouseReportViewer {
     find('.viewer-placeholder-inner', document.body).classList.add('lh-loading');
     document.body.appendChild(loadingOverlayEl);
     this._psi.fetchPSI(params).then(response => {
+      if (!response.lighthouseResult) {
+        if (response.error) {
+          // eslint-disable-next-line no-console
+          console.error(response.error);
+          loadingOverlayEl.innerText = response.error.message;
+        } else {
+          loadingOverlayEl.innerText = 'PSI did not return a Lighthouse Result';
+        }
+        return;
+      }
+
       this._reportIsFromPSI = true;
       loadingOverlayEl.remove();
       this._replaceReportHtml(response.lighthouseResult);

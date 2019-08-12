@@ -5,7 +5,7 @@
  */
 'use strict';
 
-/** @typedef {{lighthouseResult: LH.Result}} PSIResponse */
+/** @typedef {{lighthouseResult?: LH.Result, error?: {message: string}}} PSIResponse */
 
 const PSI_URL = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
 const PSI_KEY = 'AIzaSyAjcDRNN9CX9dCazhqI4lGR7yyQbkd_oYE';
