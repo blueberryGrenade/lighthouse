@@ -32,10 +32,10 @@ class PSIApi {
     }, params);
 
     const apiUrl = new URL(PSI_URL);
-    Object.entries(params).forEach(([key, value]) => {
-      if (key === 'category') return;
+    for (const [key, value] of Object.entries(params)) {
+      if (key === 'category') continue;
       if (value) apiUrl.searchParams.append(key, value);
-    });
+    }
     for (const singleCategory of (params.category || PSI_DEFAULT_CATEGORIES)) {
       apiUrl.searchParams.append('category', singleCategory);
     }
