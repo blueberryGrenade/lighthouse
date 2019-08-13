@@ -26,20 +26,19 @@ class PSIApi {
    * @return {Promise<PSIResponse>}
    */
   fetchPSI(params) {
-    params = Object.assign({
-      key: PSI_KEY,
-      strategy: 'mobile',
-    }, params);
-
     const apiUrl = new URL(PSI_URL);
-    for (const [key, value] of Object.entries(params)) {
+    for (const kv of Object.entries(params)) {
+      const key = kv[0];
+      let value = kv[1];
+
       if (key === 'category') continue;
-      if (value) apiUrl.searchParams.append(key, value);
+      if (key === 'strategy') value = value || 'mobile';
+      if (typeof value !== 'undefined') apiUrl.searchParams.append(key, value);
     }
     for (const singleCategory of (params.category || PSI_DEFAULT_CATEGORIES)) {
       apiUrl.searchParams.append('category', singleCategory);
     }
-
+    apiUrl.searchParams.append('key', PSI_KEY);
     return fetch(apiUrl.href).then(res => res.json());
   }
 }
