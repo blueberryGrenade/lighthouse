@@ -78,7 +78,7 @@ describe('Lighthouse Viewer', () => {
     ]);
   });
 
-  describe('Upload', () => {
+  describe('Renders the report', () => {
     beforeAll(async function() {
       await viewerPage.goto(viewerUrl, {waitUntil: 'networkidle2', timeout: 30000});
       const fileInput = await viewerPage.$('#hidden-file-input');

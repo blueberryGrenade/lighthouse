@@ -125,14 +125,6 @@
   display: block !important;
 }
 
-.lh-loading-overlay {
-  position: absolute;
-  top: 50%;
-  transform: translateX(-50%);
-  left: 50%;
-  filter: none;
-}
-
 .lh-loading {
   filter: blur(2px);
 }

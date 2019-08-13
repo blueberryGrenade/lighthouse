@@ -395,26 +395,25 @@ class LighthouseReportViewer {
    * @param {PSIParams} params
    */
   _loadFromPSI(params) {
-    const loadingOverlayEl = document.createElement('div');
-    loadingOverlayEl.classList.add('lh-loading-overlay');
-    loadingOverlayEl.textContent = 'Waiting for Lighthouse results ...';
-    find('.viewer-placeholder-inner', document.body).classList.add('lh-loading');
-    document.body.appendChild(loadingOverlayEl);
+    const placeholder = find('.viewer-placeholder-inner', document.body);
+    placeholder.classList.add('lh-loading');
+    logger.log('Waiting for Lighthouse results ...');
     return this._psi.fetchPSI(params).then(response => {
+      logger.hide();
+      placeholder.classList.remove('lh-loading');
+
       if (!response.lighthouseResult) {
         if (response.error) {
           // eslint-disable-next-line no-console
           console.error(response.error);
           logger.error(response.error.message);
-          loadingOverlayEl.innerText = response.error.message;
         } else {
-          loadingOverlayEl.innerText = 'PSI did not return a Lighthouse Result';
+          logger.error('PSI did not return a Lighthouse Result');
         }
         return;
       }
 
       this._reportProvider = 'psi';
-      loadingOverlayEl.remove();
       this._replaceReportHtml(response.lighthouseResult);
     });
   }
