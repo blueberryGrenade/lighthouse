@@ -28,12 +28,12 @@ class PSIApi {
   fetchPSI(params) {
     const apiUrl = new URL(PSI_URL);
     for (const kv of Object.entries(params)) {
-      const key = kv[0];
+      const name = kv[0];
       let value = kv[1];
 
-      if (key === 'category') continue;
-      if (key === 'strategy') value = value || 'mobile';
-      if (typeof value !== 'undefined') apiUrl.searchParams.append(key, value);
+      if (name === 'category') continue;
+      if (name === 'strategy') value = value || 'mobile';
+      if (typeof value !== 'undefined') apiUrl.searchParams.append(name, value);
     }
     for (const singleCategory of (params.category || PSI_DEFAULT_CATEGORIES)) {
       apiUrl.searchParams.append('category', singleCategory);
