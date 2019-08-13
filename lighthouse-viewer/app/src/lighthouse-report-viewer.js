@@ -45,21 +45,7 @@ class LighthouseReportViewer {
 
     this._reportIsFromPSI = false;
 
-    const params = new URLSearchParams(location.search);
-    const url = params.get('url');
-    if (url) {
-      this._loadFromPSI({
-        url,
-        category: params.has('category') ? params.getAll('category') : undefined,
-        strategy: params.get('strategy') || undefined,
-        locale: params.get('locale') || undefined,
-        utm_source: params.get('utm_source') || undefined,
-      });
-    } else {
-      this._addEventListeners();
-      this._loadFromDeepLink();
-      this._listenForMessages();
-    }
+    this._loadFromDeepLink();
   }
 
   static get APP_URL() {
@@ -103,20 +89,31 @@ class LighthouseReportViewer {
 
   /**
    * Attempts to pull gist id from URL and render report from it.
-   * @return {Promise<void>}
    * @private
    */
   _loadFromDeepLink() {
     const params = new URLSearchParams(location.search);
     const gistId = params.get('gist');
-    if (!gistId) {
-      return Promise.resolve();
+    const url = params.get('url');
+
+    if (url) {
+      return this._loadFromPSI({
+        url,
+        category: params.has('category') ? params.getAll('category') : undefined,
+        strategy: params.get('strategy') || undefined,
+        locale: params.get('locale') || undefined,
+        utm_source: params.get('utm_source') || undefined,
+      });
     }
 
-    return this._github.getGistFileContentAsJson(gistId).then(reportJson => {
-      this._reportIsFromGist = true;
-      this._replaceReportHtml(reportJson);
-    }).catch(err => logger.error(err.message));
+    if (gistId) {
+      return this._github.getGistFileContentAsJson(gistId).then(reportJson => {
+        this._reportIsFromGist = true;
+        this._replaceReportHtml(reportJson);
+      }).catch(err => logger.error(err.message));
+    }
+
+    return Promise.resolve();
   }
 
   /**
@@ -403,7 +400,7 @@ class LighthouseReportViewer {
     loadingOverlayEl.textContent = 'Waiting for Lighthouse results ...';
     find('.viewer-placeholder-inner', document.body).classList.add('lh-loading');
     document.body.appendChild(loadingOverlayEl);
-    this._psi.fetchPSI(params).then(response => {
+    return this._psi.fetchPSI(params).then(response => {
       if (!response.lighthouseResult) {
         if (response.error) {
           // eslint-disable-next-line no-console
