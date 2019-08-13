@@ -23,8 +23,15 @@ For more information on deployment, see `releasing.md`.
 
 ## PSI
 
+Example:
 ```
 http://localhost:8000/?url=https://www.example.com&category=pwa&category=seo
 ```
 
-Other options: `locale`, `strategy`, `utm_source`
+Options:
+
+`url` - URL to audit
+`category` - Category to enable. One per category.
+`strategy` - mobile, desktop
+`locale` - locale to render report with
+`utm_source` - id that identifies the tool using the viewer
