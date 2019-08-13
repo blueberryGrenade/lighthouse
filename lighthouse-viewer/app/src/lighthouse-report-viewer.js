@@ -45,7 +45,9 @@ class LighthouseReportViewer {
 
     this._reportIsFromPSI = false;
 
+    this._addEventListeners();
     this._loadFromDeepLink();
+    this._listenForMessages();
   }
 
   static get APP_URL() {

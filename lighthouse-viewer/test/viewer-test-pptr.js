@@ -206,6 +206,9 @@ describe('Lighthouse Viewer', () => {
         lighthouseCategories.sort(),
         `all categories not found`
       );
+
+      // Should not clear the query string.
+      expect(await viewerPage.url()).toEqual(url);
     });
 
     it('should call out to PSI with specified categoeries', async () => {
