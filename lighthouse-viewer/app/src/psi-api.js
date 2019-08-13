@@ -47,4 +47,5 @@ class PSIApi {
 // node export for testing.
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = PSIApi;
+  module.exports.PSI_DEFAULT_CATEGORIES = PSI_DEFAULT_CATEGORIES;
 }

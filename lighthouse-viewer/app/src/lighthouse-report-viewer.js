@@ -407,6 +407,7 @@ class LighthouseReportViewer {
         if (response.error) {
           // eslint-disable-next-line no-console
           console.error(response.error);
+          logger.error(response.error.message);
           loadingOverlayEl.innerText = response.error.message;
         } else {
           loadingOverlayEl.innerText = 'PSI did not return a Lighthouse Result';
