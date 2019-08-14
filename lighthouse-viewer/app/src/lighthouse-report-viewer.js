@@ -93,10 +93,17 @@ class LighthouseReportViewer {
    */
   _loadFromDeepLink() {
     const params = new URLSearchParams(location.search);
+
+    let provider = params.get('provider');
     const gistId = params.get('gist');
     const url = params.get('url');
 
-    if (url) {
+    // Default provider is gist, but only if `gist` param exists (to maintain backwards compatibility)
+    if (!provider && params.has('gist')) {
+      provider = 'gist';
+    }
+
+    if (provider === 'psi' && url) {
       return this._loadFromPSI({
         url,
         category: params.has('category') ? params.getAll('category') : undefined,
@@ -106,7 +113,7 @@ class LighthouseReportViewer {
       });
     }
 
-    if (gistId) {
+    if (provider === 'gist' && gistId) {
       return this._github.getGistFileContentAsJson(gistId).then(reportJson => {
         this._reportProvider = 'gist';
         this._replaceReportHtml(reportJson);
