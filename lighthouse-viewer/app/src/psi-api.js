@@ -27,10 +27,7 @@ class PSIApi {
    */
   fetchPSI(params) {
     const apiUrl = new URL(PSI_URL);
-    for (const kv of Object.entries(params)) {
-      const name = kv[0];
-      let value = kv[1];
-
+    for (let [name, value] of Object.entries(params)) {
       if (name === 'category') continue;
       if (name === 'strategy') value = value || 'mobile';
       if (typeof value !== 'undefined') apiUrl.searchParams.append(name, value);
