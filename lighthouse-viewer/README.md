@@ -21,11 +21,15 @@ yarn deploy-viewer
 
 For more information on deployment, see `releasing.md`.
 
+## Gist
+
+http://localhost:8000/?gist=bd1779783a5bbcb348564a58f80f7099
+
 ## PSI
 
 Example:
 ```
-http://localhost:8000/?url=https://www.example.com&category=pwa&category=seo
+http://localhost:8000/?provider=psi&url=https://www.example.com&category=pwa&category=seo
 ```
 
 Options:
