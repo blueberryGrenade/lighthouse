@@ -168,7 +168,7 @@ describe('Lighthouse Viewer', () => {
     });
 
     it('should call out to PSI with all categories by default', async () => {
-      const url = `${viewerUrl}?provider=psi&url=https://www.example.com`;
+      const url = `${viewerUrl}?source=psi&url=https://www.example.com`;
       await viewerPage.goto(url);
 
       // Intercept and respond with sample lhr.
@@ -212,7 +212,7 @@ describe('Lighthouse Viewer', () => {
     });
 
     it('should call out to PSI with specified categoeries', async () => {
-      const url = `${viewerUrl}?provider=psi&url=https://www.example.com&category=seo&category=pwa`;
+      const url = `${viewerUrl}?source=psi&url=https://www.example.com&category=seo&category=pwa`;
       await viewerPage.goto(url);
 
       const interceptedRequest = await onApiRequestInterception;
