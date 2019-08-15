@@ -103,21 +103,26 @@ class LighthouseReportViewer {
       source = 'gist';
     }
 
+    let loadPromise = null;
+
     if (source === 'psi' && url) {
-      return this._loadFromPSI({
+      loadPromise = this._loadFromPSI({
         url,
         category: params.has('category') ? params.getAll('category') : undefined,
         strategy: params.get('strategy') || undefined,
         locale: params.get('locale') || undefined,
         utm_source: params.get('utm_source') || undefined,
       });
-    }
-
-    if (source === 'gist' && gistId) {
-      return this._github.getGistFileContentAsJson(gistId).then(reportJson => {
+    } else if (source === 'gist' && gistId) {
+      loadPromise = this._github.getGistFileContentAsJson(gistId).then(reportJson => {
         this._reportProvider = 'gist';
         this._replaceReportHtml(reportJson);
       }).catch(err => logger.error(err.message));
+    }
+
+    if (loadPromise) {
+      this._toggleLoadingBlur(true);
+      return loadPromise.finally(() => this._toggleLoadingBlur(false));
     }
 
     return Promise.resolve();
@@ -355,6 +360,7 @@ class LighthouseReportViewer {
    * @private
    */
   _loadFromGistURL(urlStr) {
+    this._toggleLoadingBlur(true);
     try {
       const url = new URL(urlStr);
 
@@ -370,6 +376,8 @@ class LighthouseReportViewer {
       }
     } catch (err) {
       logger.error('Invalid URL');
+    } finally {
+      this._toggleLoadingBlur(false);
     }
   }
 
@@ -402,12 +410,9 @@ class LighthouseReportViewer {
    * @param {PSIParams} params
    */
   _loadFromPSI(params) {
-    const placeholder = find('.viewer-placeholder-inner', document.body);
-    placeholder.classList.add('lh-loading');
     logger.log('Waiting for Lighthouse results ...');
     return this._psi.fetchPSI(params).then(response => {
       logger.hide();
-      placeholder.classList.remove('lh-loading');
 
       if (!response.lighthouseResult) {
         if (response.error) {
@@ -423,6 +428,14 @@ class LighthouseReportViewer {
       this._reportProvider = 'psi';
       this._replaceReportHtml(response.lighthouseResult);
     });
+  }
+
+  /**
+   * @param {boolean} force
+   */
+  _toggleLoadingBlur(force) {
+    const placeholder = find('.viewer-placeholder-inner', document.body);
+    placeholder.classList.toggle('lh-loading', force);
   }
 }
 
