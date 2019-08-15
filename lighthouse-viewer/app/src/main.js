@@ -48,7 +48,11 @@ function main() {
   window.viewer = new LighthouseReportViewer();
 }
 
-main();
+// Defer main until the entire script is loaded.
+// This is because the current build system for the viewer concats files in alphabetical order,
+// which means "psi-api.js" comes _after_ "main.js", causing the constructor to error if `main`
+// is called synchronously.
+Promise.resolve().then(main);
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
