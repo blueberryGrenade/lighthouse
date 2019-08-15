@@ -29,7 +29,7 @@ http://localhost:8000/?gist=bd1779783a5bbcb348564a58f80f7099
 
 Example:
 ```
-http://localhost:8000/?source=psi&url=https://www.example.com&category=pwa&category=seo
+http://localhost:8000/?psiurl=https://www.example.com&category=pwa&category=seo
 ```
 
 Options:
