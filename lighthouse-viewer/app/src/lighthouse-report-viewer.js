@@ -100,7 +100,7 @@ class LighthouseReportViewer {
     let loadPromise = null;
 
     if (psiurl) {
-      loadPromise = this._loadFromPSI({
+      loadPromise = this._fetchFromPSI({
         url: psiurl,
         category: params.has('category') ? params.getAll('category') : undefined,
         strategy: params.get('strategy') || undefined,
@@ -354,7 +354,6 @@ class LighthouseReportViewer {
    * @private
    */
   _loadFromGistURL(urlStr) {
-    this._toggleLoadingBlur(true);
     try {
       const url = new URL(urlStr);
 
@@ -370,8 +369,6 @@ class LighthouseReportViewer {
       }
     } catch (err) {
       logger.error('Invalid URL');
-    } finally {
-      this._toggleLoadingBlur(false);
     }
   }
 
@@ -403,7 +400,7 @@ class LighthouseReportViewer {
   /**
    * @param {PSIParams} params
    */
-  _loadFromPSI(params) {
+  _fetchFromPSI(params) {
     logger.log('Waiting for Lighthouse results ...');
     return this._psi.fetchPSI(params).then(response => {
       logger.hide();
