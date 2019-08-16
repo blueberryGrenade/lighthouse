@@ -97,8 +97,10 @@ class LighthouseReportViewer {
     const gistId = params.get('gist');
     const psiurl = params.get('psiurl');
 
-    let loadPromise = null;
+    if (!gistId && !psiurl) return;
 
+    this._toggleLoadingBlur(true);
+    let loadPromise = Promise.resolve();
     if (psiurl) {
       loadPromise = this._fetchFromPSI({
         url: psiurl,
@@ -114,12 +116,7 @@ class LighthouseReportViewer {
       }).catch(err => logger.error(err.message));
     }
 
-    if (loadPromise) {
-      this._toggleLoadingBlur(true);
-      return loadPromise.finally(() => this._toggleLoadingBlur(false));
-    }
-
-    return Promise.resolve();
+    return loadPromise.finally(() => this._toggleLoadingBlur(false));
   }
 
   /**
@@ -425,8 +422,8 @@ class LighthouseReportViewer {
    * @param {boolean} force
    */
   _toggleLoadingBlur(force) {
-    const placeholder = find('.viewer-placeholder-inner', document.body);
-    placeholder.classList.toggle('lh-loading', force);
+    const placeholder = document.querySelector('.viewer-placeholder-inner');
+    if (placeholder) placeholder.classList.toggle('lh-loading', force);
   }
 }
 
