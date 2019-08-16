@@ -52,7 +52,7 @@ function main() {
 // This is because the current build system for the viewer concats files in alphabetical order,
 // which means "psi-api.js" comes _after_ "main.js", causing the constructor to error if `main`
 // is called synchronously.
-Promise.resolve().then(main);
+window.addEventListener('DOMContentLoaded', main);
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
