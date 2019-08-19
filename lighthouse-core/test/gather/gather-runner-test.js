@@ -878,13 +878,6 @@ describe('GatherRunner', function() {
       assert.ok(!GatherRunner.getNetworkError(mainRecord));
     });
 
-    it('passes when the page is loaded, ignoring any fragment', () => {
-      const url = 'http://example.com/#/page/list';
-      const mainRecord = new NetworkRequest();
-      mainRecord.url = 'http://example.com';
-      assert.ok(!GatherRunner.getNetworkError(mainRecord));
-    });
-
     it('fails when page fails to load', () => {
       const url = 'http://the-page.com';
       const mainRecord = new NetworkRequest();
@@ -1038,6 +1031,16 @@ describe('GatherRunner', function() {
       const mainRecord = new NetworkRequest();
       const loadData = {networkRecords: [mainRecord]};
       mainRecord.url = passContext.url;
+      const error = GatherRunner.getPageLoadError(passContext, loadData, undefined);
+      expect(error).toBeUndefined();
+    });
+
+    it('passes when the page is loaded, ignoring any fragment', () => {
+      const url = 'http://example.com/#/page/list';
+      const mainRecord = new NetworkRequest();
+      const passContext = {url, driver: {online: true}};
+      const loadData = {networkRecords: [mainRecord]};
+      mainRecord.url = 'http://example.com';
       const error = GatherRunner.getPageLoadError(passContext, loadData, undefined);
       expect(error).toBeUndefined();
     });
