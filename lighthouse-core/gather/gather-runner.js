@@ -9,7 +9,6 @@ const log = require('lighthouse-logger');
 const manifestParser = require('../lib/manifest-parser.js');
 const stacksGatherer = require('../lib/stack-collector.js');
 const LHError = require('../lib/lh-error.js');
-const URL = require('../lib/url-shim.js');
 const NetworkAnalyzer = require('../lib/dependency-graph/simulator/network-analyzer.js');
 const NetworkRecorder = require('../lib/network-recorder.js');
 const constants = require('../config/constants.js');
