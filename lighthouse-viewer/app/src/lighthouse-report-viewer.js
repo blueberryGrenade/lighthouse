@@ -36,12 +36,8 @@ class LighthouseReportViewer {
     this._dragAndDropper = new DragAndDrop(this._onFileLoad);
     this._github = new GithubApi();
     this._psi = new PSIApi();
-
-    /**
-     * Used for tracking where the report came from.
-     * @type {'gist' | 'psi' | 'opener' | 'paste' | 'file' | null}
-     */
-    this._reportProvider = null;
+    this._reportIsFromGist = false;
+    this._reportIsFromPSI = false;
 
     this._addEventListeners();
     this._loadFromDeepLink();
@@ -111,7 +107,7 @@ class LighthouseReportViewer {
       });
     } else if (gistId) {
       loadPromise = this._github.getGistFileContentAsJson(gistId).then(reportJson => {
-        this._reportProvider = 'gist';
+        this._reportIsFromGist = true;
         this._replaceReportHtml(reportJson);
       }).catch(err => logger.error(err.message));
     }
@@ -175,12 +171,12 @@ class LighthouseReportViewer {
 
       // Only give gist-saving callback if current report isn't from a gist.
       let saveCallback = null;
-      if (this._reportProvider !== 'gist') {
+      if (!this._reportIsFromGist) {
         saveCallback = this._onSaveJson;
       }
 
       // Only clear query string if current report isn't from a gist or PSI.
-      if (this._reportProvider !== 'gist' && this._reportProvider !== 'psi') {
+      if (!this._reportIsFromGist && !this._reportIsFromPSI) {
         history.pushState({}, '', LighthouseReportViewer.APP_URL);
       }
 
@@ -191,6 +187,8 @@ class LighthouseReportViewer {
       dom.resetTemplates(); // TODO(bckenny): hack
       container.textContent = '';
       throw e;
+    } finally {
+      this._reportIsFromGist = this._reportIsFromPSI = false;
     }
 
     // Remove the placeholder UI once the user has loaded a report.
@@ -220,7 +218,6 @@ class LighthouseReportViewer {
       } catch (e) {
         throw new Error('Could not parse JSON file.');
       }
-      this._reportProvider = 'file';
       this._replaceReportHtml(json);
     }).catch(err => logger.error(err.message));
   }
@@ -281,7 +278,6 @@ class LighthouseReportViewer {
         window.ga('send', 'event', 'report', 'created');
       }
 
-      this._reportProvider = 'gist';
       history.pushState({}, '', `${LighthouseReportViewer.APP_URL}?gist=${id}`);
 
       return id;
@@ -312,14 +308,12 @@ class LighthouseReportViewer {
     // Try paste as json content.
     try {
       const json = JSON.parse(e.clipboardData.getData('text'));
-      this._reportProvider = 'paste';
       this._replaceReportHtml(json);
 
       if (window.ga) {
         window.ga('send', 'event', 'report', 'paste');
       }
     } catch (err) {
-      this._reportProvider = null;
     }
   }
 
@@ -376,7 +370,6 @@ class LighthouseReportViewer {
   _listenForMessages() {
     window.addEventListener('message', e => {
       if (e.source === self.opener && e.data.lhresults) {
-        this._reportProvider = 'opener';
         this._replaceReportHtml(e.data.lhresults);
 
         if (self.opener && !self.opener.closed) {
@@ -413,7 +406,7 @@ class LighthouseReportViewer {
         return;
       }
 
-      this._reportProvider = 'psi';
+      this._reportIsFromPSI = true;
       this._replaceReportHtml(response.lighthouseResult);
     });
   }
