@@ -35,7 +35,12 @@ class LighthouseReportViewer {
 
     this._dragAndDropper = new DragAndDrop(this._onFileLoad);
     this._github = new GithubApi();
+
     this._psi = new PSIApi();
+    /**
+     * Used for tracking whether to offer to upload as a gist.
+     * @type {boolean}
+     */
     this._reportIsFromGist = false;
     this._reportIsFromPSI = false;
 
