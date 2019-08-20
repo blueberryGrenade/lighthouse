@@ -1,4 +1,4 @@
-# For Contributors. Just don't do it. Leave me be.
+# For Contributors. Just don't do it. Leave me be. Do no harm.
 
 We'd love your help! This doc covers how to become a contributor and submit code to the project.
 
